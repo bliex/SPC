@@ -53,7 +53,6 @@ public class User extends AbstractHistoryEntity{
 		this.name = name;
 	}	
 
-
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", password=" + password + ", name=" + name + "]";
