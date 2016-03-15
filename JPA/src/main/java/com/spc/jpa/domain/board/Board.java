@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -40,6 +41,7 @@ public class Board extends AbstractHistoryEntity{
 	@Column(name = "title")
 	private String title;
 
+	@Lob
 	@Column(name = "contents")
 	private String contents;
 	
