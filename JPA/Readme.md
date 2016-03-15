@@ -43,5 +43,13 @@ To run include build process,
 ## Browse Web Application
 
 ```
-http://localhost:8081/app/index.html
+Welcome
+http://localhost:8080/app/index.html
+
+HAL Browser
+http://localhost:8080/api/
+
+Swagger
+http://localhost:8080/app/swagger/index.html
+=> http://localhost:8080/api-docs
 ```
