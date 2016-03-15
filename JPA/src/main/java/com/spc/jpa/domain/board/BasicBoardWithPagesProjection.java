@@ -12,7 +12,7 @@ public interface BasicBoardWithPagesProjection {
 	
 	String getTitle();
 	  
-	String getContent();
+	String getContents();
 	
 	String getBoardType();
   
