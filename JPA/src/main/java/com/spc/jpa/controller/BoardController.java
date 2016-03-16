@@ -2,6 +2,8 @@ package com.spc.jpa.controller;
 
 import java.util.List;
 
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +37,6 @@ public class BoardController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
 	@RequestMapping(path = "/swapi/boards", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<?> getBoards() {
-
     	List<Board> result = boardRepository.findAll();
 		return ResponseEntity.ok(result);
 	}

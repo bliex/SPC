@@ -36,4 +36,21 @@ public interface BoardRepository extends JpaRepository<Board, String> {
 	 * @return Page<Board>
 	 */
 	public Page<Board> findByTitleContainingOrContentsContaining(Pageable pageable, @Param("title")String title, @Param("contents")String contents);
+
+	/**
+	 * 사용자 목록 조회 (페이징, 검색)
+	 * 
+	 * @param pageable
+	 * @return Page<Board>
+	 */
+	public Page<Board> findByTitleContaining(Pageable pageable, @Param("title")String title);
+	
+	/**
+	 * 사용자 목록 조회 (페이징, 검색)
+	 * 
+	 * @param pageable
+	 * @return Page<Board>
+	 */
+	public Page<Board> findByContentsContaining(Pageable pageable, @Param("contents")String contents);
+	
 }

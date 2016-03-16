@@ -29,6 +29,9 @@ public class User extends AbstractHistoryEntity{
   	@Column(name = "name")
   	private String name;
   	
+  	@Column(name = "email")
+  	private String email;
+  	
 	public String getId() {
 		return id;
 	}
@@ -52,10 +55,18 @@ public class User extends AbstractHistoryEntity{
 	public void setName(String name) {
 		this.name = name;
 	}	
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", password=" + password + ", name=" + name + "]";
+		return "User [id=" + id + ", password=" + password + ", name=" + name + ", email=" + email + "]";
 	}
 
 }
