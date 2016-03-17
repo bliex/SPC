@@ -9,6 +9,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(path = "persons", itemResourceRel = "person", collectionResourceRel = "persons")
 public interface PersonRepository extends JpaRepository<Person, String> {
 
+
 	public Page<Person> findAll(Pageable pageable);
 	
 }
