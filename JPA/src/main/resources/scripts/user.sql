@@ -51,14 +51,14 @@ INSERT INTO product(product_id, name, price, version, created_time, created_by, 
 INSERT INTO product(product_id, name, price, version, created_time, created_by, modified_time, modified_by) VALUES ('800', '제품8', 80000, 1.0, NOW(), 'INIT',  NOW(), 'INIT');
 
 --product_category
-INSERT INTO product(product_id, name) VALUES ('100', '100');
-INSERT INTO product(product_id, name) VALUES ('200', '100');
-INSERT INTO product(product_id, name) VALUES ('300', '200');
-INSERT INTO product(product_id, name) VALUES ('400', '200');
-INSERT INTO product(product_id, name) VALUES ('100', '300');
-INSERT INTO product(product_id, name) VALUES ('200', '300');
-INSERT INTO product(product_id, name) VALUES ('300', '400');
-INSERT INTO product(product_id, name) VALUES ('400', '400');
+INSERT INTO product_category(product_id, category_id) VALUES ('100', '100');
+INSERT INTO product_category(product_id, category_id) VALUES ('200', '100');
+INSERT INTO product_category(product_id, category_id) VALUES ('300', '200');
+INSERT INTO product_category(product_id, category_id) VALUES ('400', '200');
+INSERT INTO product_category(product_id, category_id) VALUES ('100', '300');
+INSERT INTO product_category(product_id, category_id) VALUES ('200', '300');
+INSERT INTO product_category(product_id, category_id) VALUES ('300', '400');
+INSERT INTO product_category(product_id, category_id) VALUES ('400', '400');
 
 -- users
 INSERT INTO users(id, password, name, email, version, created_time, created_by, modified_time, modified_by) VALUES ('spc', 'spc', 'spc', 'spc@gmail.com', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
