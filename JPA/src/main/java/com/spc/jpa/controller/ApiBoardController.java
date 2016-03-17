@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spc.jpa.common.Constant.Code;
+import com.spc.jpa.common.Constant.Message;
 import com.spc.jpa.domain.board.Board;
 import com.spc.jpa.domain.board.BoardRepository;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -53,13 +55,13 @@ public class ApiBoardController {
 	    		}
 	    	}
 	    	if (result != null) {
-	    		resultMap.put("resultCode", "000");
-	    		resultMap.put("resultMessage", "success");
+	    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
 	    		resultMap.put("data", result);
 	    	}
     	} catch (Exception e) {
-    		resultMap.put("resultCode", "900");
-    		resultMap.put("resultMessage", "fail");
+    		resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
     		return resultMap;
 		}
 		return resultMap;
@@ -84,13 +86,13 @@ public class ApiBoardController {
 	    	
 	    	Board result = boardRepository.save(boardVO);
 	    	if (result != null) {
-	    		resultMap.put("resultCode", "000");
-	    		resultMap.put("resultMessage", "success");
+	    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
 	    		resultMap.put("data", result);
 	    	}
     	} catch (Exception e) {
-    		resultMap.put("resultCode", "900");
-			resultMap.put("resultMessage", "fail");
+    		resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
 		}
 		return resultMap;
 	}
@@ -118,16 +120,16 @@ public class ApiBoardController {
     			}
     			Board result = boardRepository.save(boardVO);
 				boardRepository.flush();
-				resultMap.put("resultCode", "000");
-				resultMap.put("resultMessage", "success");
+				resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
 				resultMap.put("data", result);
     		} else {
-    			resultMap.put("resultCode", "201");
-    			resultMap.put("resultMessage", "존재하지 않는 게시물 입니다.");
+    			resultMap.put("resultCode", Code.CODE_BOARD_NON_VALID);
+    			resultMap.put("resultMessage", Message.MSG_BOARD_NON_VALID);
     		}
 		} catch (Exception e) {
-			resultMap.put("resultCode", "900");
-			resultMap.put("resultMessage", "false");
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
 		}
     	return resultMap;
     	
@@ -147,15 +149,15 @@ public class ApiBoardController {
     		if (null != boardVO) {
 	    		boardRepository.delete(board.getId());
 	    		boardRepository.flush();
-	    		resultMap.put("resultCode", "000");
-				resultMap.put("resultMessage", "success");
+	    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
     		} else {
-    			resultMap.put("resultCode", "201");
-    			resultMap.put("resultMessage", "존재하지 않는 게시물 입니다.");
+    			resultMap.put("resultCode", Code.CODE_BOARD_NON_VALID);
+    			resultMap.put("resultMessage", Message.MSG_BOARD_NON_VALID);
     		}
 		} catch (Exception e) {
-			resultMap.put("resultCode", "900");
-			resultMap.put("resultMessage", "false");
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
 		}
 		return resultMap;
 		

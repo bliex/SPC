@@ -3,6 +3,10 @@ package com.spc.jpa.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spc.jpa.common.Constant.Code;
+import com.spc.jpa.common.Constant.Message;
+import com.spc.jpa.common.Session;
 import com.spc.jpa.domain.user.User;
 import com.spc.jpa.domain.user.UserRepository;
+import com.spc.jpa.vo.UserToken;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -31,21 +39,29 @@ public class ApiUserController {
     @ApiOperation(value = "users", notes = "post : login", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
 	@RequestMapping(path = "/api/login", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> login(@ApiParam(name = "userVO", defaultValue="{\"email\" : \"bliex@gmail.com\", \"password\":\"password\"}", value ="user data insert", required = true)@RequestBody User user){
+	public @ResponseBody Map<String, Object> login(HttpServletRequest request,
+			HttpServletResponse response, @ApiParam(name = "userVO", defaultValue="{\"email\" : \"bliex@gmail.com\", \"password\":\"password\"}", value ="user data insert", required = true)@RequestBody User user){
     	Map<String, Object> resultMap = new HashMap<>();
     	try {
     		User result = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
     		if ( result != null ) {
-    			resultMap.put("resultCode", "000");
-				resultMap.put("resultMessage", "success");
+    			resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
 				resultMap.put("data", result);
+				// 로그인정보만 세션에 담음
+				HttpSession session = request.getSession();
+				session.setAttribute(Session.LOGIN_KEY, user);
+				
+				// 토큰정보 세션에 담음
+				UserToken token = new UserToken(result);
+		        session.setAttribute(Session.LOGIN_TOKEN_KEY, token);
     		} else {
-    			resultMap.put("resultCode", "101");
-				resultMap.put("resultMessage", "아이디 혹은 비밀번호를 확인해 주세요.");
+    			resultMap.put("resultCode", Code.CODE_LOGIN_FAIL);
+				resultMap.put("resultMessage", Message.MSG_LOGIN_FAIL);
     		}
 		} catch (Exception e) {
-			resultMap.put("resultCode", "900");
-			resultMap.put("resultMessage", "fail");
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
 		}
     	return resultMap;
 	}
@@ -61,15 +77,15 @@ public class ApiUserController {
     	try {
     		long result = userRepository.countByEmail(email);
     		if ( result == 0 ) {
-    			resultMap.put("resultCode", "000");
-				resultMap.put("resultMessage", "success");
+    			resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
     		} else {
-    			resultMap.put("resultCode", "102");
-				resultMap.put("resultMessage", "이미 사용중인 아이디 입니다.");
+    			resultMap.put("resultCode", Code.CODE_DUPLICATION);
+				resultMap.put("resultMessage", Message.MSG_DUPLICATION);
     		}
 		} catch (Exception e) {
-			resultMap.put("resultCode", "900");
-			resultMap.put("resultMessage", "fail");
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
 		}
     	return resultMap;
 	}
@@ -90,15 +106,37 @@ public class ApiUserController {
     		User result = userRepository.save(userVO);
     		
     		if ( result != null ){
-    			resultMap.put("resultCode", "000");
-				resultMap.put("resultMessage", "success");
+    			resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
 				resultMap.put("data", result);
     		}
 		} catch (Exception e) {
-			resultMap.put("resultCode", "900");
-			resultMap.put("resultMessage", "fail");
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
 		}
 		return resultMap;
+	}
+    /**
+	 * 로그아웃
+	 */
+    @ApiOperation(value = "users", notes = "post : logout", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
+	@RequestMapping(path = "/api/logout", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> logout(HttpServletRequest request,
+			HttpServletResponse response, @ApiParam(name = "userVO", defaultValue="{\"id\":\"id\",\"password\":\"password\",\"name\":\"name\"}", value ="user data insert", required = true)@RequestBody User user){
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+    		HttpSession session = request.getSession();
+    		session.removeAttribute(Session.LOGIN_KEY);
+    		session.removeAttribute(Session.LOGIN_TOKEN_KEY);
+    		
+    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+			resultMap.put("resultMessage", Message.MSG_SUCCESS);
+		} catch (Exception e) {
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+    	return resultMap;
 	}
     
 }

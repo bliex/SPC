@@ -102,6 +102,4 @@ public class Product extends AbstractHistoryEntity {
 				+ ", categories=" + categories + "]";
 	}
     
-    
-    
 }
