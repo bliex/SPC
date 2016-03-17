@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spc.jpa.domain.onetomany.Member;
-import com.spc.jpa.domain.onetomany.OneToManyRepository;
+import com.spc.jpa.domain.onetomany.MemberRepository;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
@@ -19,7 +19,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @RestController
 public class OneToManyController {
 	@Autowired
-	OneToManyRepository oneToManyRepository;
+	MemberRepository oneToManyRepository;
 
     @ApiOperation(value = "members", notes = "get : members", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
