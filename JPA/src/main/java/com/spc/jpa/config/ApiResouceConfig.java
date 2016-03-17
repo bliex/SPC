@@ -25,6 +25,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,6 +45,19 @@ import com.mangofactory.swagger.models.dto.ApiInfo;
 @EnableWebMvc
 @EnableSwagger
 public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
+
+	/**
+	 * jsp PreFix, PostFix
+	 * 
+	 * @return
+	 */
+	@Bean
+	public InternalResourceViewResolver internalResourceViewResolver() {
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setPrefix("/WEB-INF/jsp/");
+		viewResolver.setSuffix(".jsp");
+		return viewResolver;
+	}
 
 	@Autowired
 	private SpringSwaggerConfig springSwaggerConfig;
@@ -146,6 +160,7 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 
 	/**
 	 * API 서버를 만들때만 사용
+	 * 
 	 * @return
 	 */
 	@Bean
