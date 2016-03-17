@@ -52,7 +52,7 @@ INSERT INTO product(product_id, name, price, version, created_time, created_by, 
 
 --product_category
 INSERT INTO product_category(product_id, category_id) VALUES ('100', '100');
-INSERT INTO product_category(product_id, category_id) VALUES ('200', '100');
+INSERT INTO product_category(product_id, category_id) VALUES ('200', '200');
 INSERT INTO product_category(product_id, category_id) VALUES ('300', '200');
 INSERT INTO product_category(product_id, category_id) VALUES ('400', '200');
 INSERT INTO product_category(product_id, category_id) VALUES ('100', '300');

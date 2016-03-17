@@ -19,15 +19,15 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @RestController
 public class OneToManyController {
 	@Autowired
-	MemberRepository oneToManyRepository;
+	MemberRepository memberRepository;
 
     @ApiOperation(value = "members", notes = "get : members", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
 	@RequestMapping(path = "/swapi/members", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<?> getPersons() {
 
-    	List<Member> result = oneToManyRepository.findAll();
+    	List<Member> result = memberRepository.findAll();
+    	
 		return ResponseEntity.ok(result);
-		
 	}
 }
