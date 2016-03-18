@@ -1,24 +1,31 @@
 package com.spc.jpa.controller;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spc.jpa.common.Session;
+import com.spc.jpa.common.Constant.Code;
+import com.spc.jpa.common.Constant.Message;
+import com.spc.jpa.common.Path;
 import com.spc.jpa.domain.board.Board;
+import com.spc.jpa.domain.board.Board.BoardType;
+import com.spc.jpa.domain.board.BoardInfo;
 import com.spc.jpa.domain.board.BoardRepository;
+import com.spc.jpa.domain.user.User;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -30,132 +37,157 @@ public class BoardController {
 	@Autowired
 	BoardRepository boardRepository;
 	
-	/**
-	 * 게시판 목록 전체 조회
-	 */
-    @ApiOperation(value = "boards", notes = "get : boards", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/boards", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<?> getBoards() {
-    	List<Board> result = boardRepository.findAll();
-		return ResponseEntity.ok(result);
-	}
-    
-    /**
-	 * 게시판 조회(페이징)
-	 */
-    @ApiOperation(value = "boards", notes = "get : boards [paging]", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/boards/paging", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<?> getBoardsPaging(@RequestParam(value="page", required=true, defaultValue="1") int page,
-			@RequestParam(value="size", required=true, defaultValue="5") int size) {
-    	Page<Board> result = (Page<Board>) boardRepository.findAll(new PageRequest(page-1, size));
-		return ResponseEntity.ok(result);
-	}
-    
-    /**
-	 * 게시판 조회(정렬)
-	 */
-    @ApiOperation(value = "boards", notes = "get : boards [sorting]", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/boards/sorting", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<?> getBoardsSorting(@RequestParam(value="order", required=true, defaultValue="ASC/DESC") String order,
-			@RequestParam(value="column", required=true, defaultValue="title") String column) {
-    	
-    	Sort sort;
-    	if ( order.toUpperCase().equals("DESC") ) {
-    		sort = new Sort(Sort.Direction.DESC, column.toLowerCase());
-    	} else {
-    		sort = new Sort(Sort.Direction.ASC, column.toLowerCase());
-    	}
-    	
-    	List<Board> result = boardRepository.findAll(sort);
-		return ResponseEntity.ok(result);
-	}
-    
     /**
 	 * 게시판 조회 (검색, 페이징)
 	 */
-    @ApiOperation(value = "boards", notes = "get : boards [searching, paging]", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/boards/searching", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<?> getBoardsSearching(@RequestParam(value="page", required=true, defaultValue="1") int page,
-			@RequestParam(value="size", required=true, defaultValue="5") int size,
-			@RequestParam(value="searchkeyword", required=true, defaultValue="keyword") String searchkeyword) {
+    @ApiOperation(value = "boards", notes = "post : boards", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.BOARD_LIST, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> findBoards(@ApiParam(name = "BoardInfo", defaultValue="{\"boardType\" : \"NOTICE_BOARD\", \"page\" : \"1\", \"size\":\"10\",\"searchType\":\"TITLE\",\"searchKeyword\":\"\"}", value ="paging and searching data", required = true) @RequestBody BoardInfo info) {
     	
-    	Page<Board> result;
-    	if( searchkeyword.equals( "" )){
-    		result = boardRepository.findAll(new PageRequest(page-1, size));
-    	}else{
-    		result = boardRepository.findByTitleContainingOrContentsContaining(new PageRequest(page-1, size), searchkeyword, searchkeyword);
-    	}
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {    		
+    		Page<Board> result;
+	    	if( info.getSearchKeyword().equals( "" )){
+	    			result = boardRepository.findByBoardType(new PageRequest(info.getPage()-1, info.getSize()), info.getBoardType());
+	    	}else{
+	    		if ( info.getSearchType().equals("TITLE") ) {
+	    			result = boardRepository.findByBoardTypeAndTitleContaining(new PageRequest(info.getPage()-1, info.getSize()), info.getSearchKeyword(), info.getBoardType());
+	    		} else {
+	    			result = boardRepository.findByBoardTypeAndContentsContaining(new PageRequest(info.getPage()-1, info.getSize()), info.getSearchKeyword(), info.getBoardType());
+	    		}
+	    	}
+	    	if (result != null) {
+	    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
+	    		resultMap.put("data", result);
+	    	}
+    	} catch (Exception e) {
+    		resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+    		return resultMap;
+		}
+		return resultMap;
+	}
+    
+    /**
+	 * 게시판 상세 조회 
+	 */
+    @ApiOperation(value = "boards", notes = "post : board detail", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.BOARD_DETAIL, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> findBoardDetail(@ApiParam(name = "Board", defaultValue="{\"id\":\"board_id\"}", value ="board data", required = true) @RequestBody Board board) {
     	
-		return ResponseEntity.ok(result);
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {    		
+    		Board result = boardRepository.findOne(board.getId());
+    		if ( result != null ) {
+    			resultMap.put("resultCode", Code.CODE_SUCCESS);
+    			resultMap.put("resultMessage", Message.MSG_SUCCESS);
+    			resultMap.put("data", result);
+    		} else {
+    			resultMap.put("resultCode", Code.CODE_BOARD_NON_VALID);
+    			resultMap.put("resultMessage", Message.MSG_BOARD_NON_VALID);
+    		}
+    	} catch (Exception e) {
+    		resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+    		return resultMap;
+		}
+		return resultMap;
 	}
     
     /**
 	 * 게시글 등록
 	 */
     @ApiOperation(value = "boards", notes = "post : boards", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/boards", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> postBoards(@ApiParam(name = "boardVO", defaultValue="{\"boardType\" : \"NOTICE_BOARD\", \"title\":\"2\",\"content\":\"3\"}", value ="board data insert", required = true)@RequestBody Board board){
-
-    	Board boardVO = new Board();
-    	boardVO.setBoardType(board.getBoardType());
-    	boardVO.setTitle(board.getTitle());
-    	boardVO.setContents(board.getContents());
-    	boardVO.setCreatedBy(board.getCreatedBy());
-    	boardVO.setCreatedTime(board.getCreatedTime());
-    	boardVO.setModifiedBy(board.getModifiedBy());
-    	boardVO.setModifiedTime(board.getModifiedTime());
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.BOARD_REGISTER, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> saveBoards(@ApiParam(name = "boardVO", defaultValue="{\"boardType\" : \"NOTICE_BOARD\", \"title\":\"제목\",\"contents\":\"내용\",\"createdBy\":\"작성자\"}", value ="board data insert", required = true)@RequestBody Board board){
     	
-    	Board resultUserVO = boardRepository.save(boardVO);
-
-		return ResponseEntity.ok(resultUserVO);
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+	    	Board boardVO = new Board();
+	    	boardVO.setBoardType(board.getBoardType());
+	    	boardVO.setTitle(board.getTitle());
+	    	boardVO.setContents(board.getContents());
+	    	boardVO.setCreatedBy(board.getCreatedBy());
+	    	boardVO.setModifiedBy(board.getCreatedBy());
+	    	
+	    	Board result = boardRepository.save(boardVO);
+	    	if (result != null) {
+	    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
+	    		resultMap.put("data", result);
+	    	}
+    	} catch (Exception e) {
+    		resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+		return resultMap;
 	}
 	
     /**
      * 게시판 수정
      */
-    @ApiOperation(value = "boards", notes = "put : boards", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/boards", method = RequestMethod.PUT)
-    public @ResponseBody ResponseEntity<?> putBoards(@ApiParam(name = "boardVO", defaultValue="{\"boardType\" : \"NOTICE_BOARD\", \"title\":\"2\",\"content\":\"3\"}", value ="board data update", required = true)@RequestBody Board board){
+	@ApiOperation(value = "boards", notes = "put : boards", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.BOARD_UPDATE, method = RequestMethod.PUT)
+    public @ResponseBody Map<String, Object> updateBoards(@ApiParam(name = "boardVO", defaultValue="{\"id\" : \"id\", \"title\":\"제목\",\"contents\":\"내용\"}", value ="board data update", required = true)@RequestBody Board board){
 
-    	Board boardVO = boardRepository.findOne(board.getId());
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+    		Board boardVO = boardRepository.findOne(board.getId());
+    		if (null != boardVO) {
+    			if (!"".equals(boardVO.getTitle())) {
+    				boardVO.setTitle(board.getTitle());
+    			}
+    			if (!"".equals(boardVO.getContents())) {
+    				boardVO.setContents(board.getContents());
+    			}
+    			Board result = boardRepository.save(boardVO);
+				boardRepository.flush();
+				resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
+				resultMap.put("data", result);
+    		} else {
+    			resultMap.put("resultCode", Code.CODE_BOARD_NON_VALID);
+    			resultMap.put("resultMessage", Message.MSG_BOARD_NON_VALID);
+    		}
+		} catch (Exception e) {
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+    	return resultMap;
     	
-    	if (null != boardVO) {
-    		if (!"".equals(boardVO.getBoardType())) {
-    			boardVO.setBoardType(board.getBoardType());
-    		}
-    		if (!"".equals(boardVO.getTitle())) {
-    			boardVO.setTitle(board.getTitle());
-    		}
-    		if (!"".equals(boardVO.getContents())) {
-    			boardVO.setContents(board.getContents());
-    		}
-    		Board resultUserVO = boardRepository.save(boardVO);
-    		boardRepository.flush();
-    		return ResponseEntity.ok(resultUserVO);
-    	} 
-    	else {
-    		return null;
-    	}
-
 	}
     
     /**
      * 게시판 삭제
      */
-    @ApiOperation(value = "boards", notes = "DELET : boards", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/boards", method = RequestMethod.DELETE)
-    public @ResponseBody ResponseEntity<?> deleteBoards(@ApiParam(name = "boardId", defaultValue="{\"id\" : \"id\"}", value ="board data delete", required = true)@RequestBody Board board){
-
-    	boardRepository.delete(board.getId());
-    	boardRepository.flush();
+    @ApiOperation(value = "boards", notes = "delete : boards", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.BOARD_DELETE, method = RequestMethod.DELETE)
+    public @ResponseBody Map<String, Object> deleteBoards(@ApiParam(name = "boardId", defaultValue="{\"id\" : \"id\"}", value ="board data delete", required = true)@RequestBody Board board){
     	
-		return ResponseEntity.ok("SUCCESS");
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+    		Board boardVO = boardRepository.findOne(board.getId());
+    		if (null != boardVO) {
+	    		boardRepository.delete(board.getId());
+	    		boardRepository.flush();
+	    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
+    		} else {
+    			resultMap.put("resultCode", Code.CODE_BOARD_NON_VALID);
+    			resultMap.put("resultMessage", Message.MSG_BOARD_NON_VALID);
+    		}
+		} catch (Exception e) {
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+		return resultMap;
+		
 	}
+    
 }

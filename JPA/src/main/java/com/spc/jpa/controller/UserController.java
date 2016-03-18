@@ -1,18 +1,27 @@
 package com.spc.jpa.controller;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spc.jpa.common.Constant.Code;
+import com.spc.jpa.common.Constant.Message;
+import com.spc.jpa.common.Path;
+import com.spc.jpa.common.Session;
 import com.spc.jpa.domain.user.User;
 import com.spc.jpa.domain.user.UserRepository;
+import com.spc.jpa.vo.UserToken;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -23,53 +32,113 @@ public class UserController {
 	
 	@Autowired
 	UserRepository userRepository;
-
-    @ApiOperation(value = "users", notes = "get : users", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/users", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<?> getUsers() {
-
-    	List<User> result = userRepository.findAll();
-		return ResponseEntity.ok(result);
-	}
-    
-    @ApiOperation(value = "users", notes = "post : users", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/users", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> postUsers(@ApiParam(name = "userVO", defaultValue="{\"name\":\"2\",\"password\":\"3\"}", value ="user data insert", required = true)@RequestBody User user){
-
-    	User userVO = new User();
-    	userVO.setName(user.getName());
-    	userVO.setPassword(user.getPassword());
-    	
-    	User resultUserVO = userRepository.save(userVO);
-
-		return ResponseEntity.ok(resultUserVO);
-	}
 	
-    @ApiOperation(value = "users", notes = "put : users", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/users", method = RequestMethod.PUT)
-    public @ResponseBody ResponseEntity<?> putUsers(@ApiParam(name = "userVO", defaultValue="{\"id\":\"bliex\",\"name\":\"2\",\"password\":\"3\"}", value ="user data update", required = true)@RequestBody User user){
+	/**
+	 * 로그인
+	 */
+    @ApiOperation(value = "users", notes = "post : login", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.USER_LOGIN, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> login(HttpServletRequest request,	HttpServletResponse response,
+			@ApiParam(name = "user data", defaultValue="{\"email\" : \"spc@gmail.com\", \"password\":\"spc\"}", value ="user data insert", required = true)@RequestBody User user){
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+    		User result = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
+    		if ( result != null ) {
+    			// 로그인정보만 저장
+    			HttpSession session = request.getSession();
+        		session.setAttribute(Session.LOGIN_KEY, result);
+        		session.setAttribute(Session.LOGIN_EMAIL_KEY, result.getEmail());
+    			
+        		// 토큰 저장
+				UserToken token = new UserToken(result.getName(), result.getEmail());
+				session.setAttribute(Session.LOGIN_TOKEN_KEY, token);
 
-    	User userVO = userRepository.findOne(user.getId());
-    	userVO.setName(user.getName());
-    	userVO.setPassword(user.getPassword());
-    	
-    	User resultUserVO = userRepository.save(userVO);
-    	userRepository.flush();
-
-		return ResponseEntity.ok(resultUserVO);
+				resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
+				resultMap.put("data", result);
+				
+    		} else {
+    			resultMap.put("resultCode", Code.CODE_LOGIN_FAIL);
+				resultMap.put("resultMessage", Message.MSG_LOGIN_FAIL);
+    		}
+		} catch (Exception e) {
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+    	return resultMap;
 	}
     
-    @ApiOperation(value = "users", notes = "DELET : users", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success request")})
-	@RequestMapping(path = "/swapi/users", method = RequestMethod.DELETE)
-    public @ResponseBody ResponseEntity<?> deleteUsers(@ApiParam(name = "userId", defaultValue="\"bliex\"", value ="user data delete", required = true)@RequestBody String userId){
-
-    	userRepository.delete(userId);
-    	userRepository.flush();
-    	
-		return ResponseEntity.ok("SUCCESS");
-	}	
+    /**
+	 * 중복 아이디 체크
+	 */
+    @ApiOperation(value = "users", notes = "post : countById", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.USER_ID_CHECK, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> countById(@ApiParam(name = "E-mail Address", defaultValue="{\"email\" : \"spc@gmail.com\"}", value ="ID validation check", required = true)@RequestBody User user){
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+    		long result = userRepository.countByEmail(user.getEmail());
+    		if ( result == 0 ) {
+    			resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
+    		} else {
+    			resultMap.put("resultCode", Code.CODE_DUPLICATION);
+				resultMap.put("resultMessage", Message.MSG_DUPLICATION);
+    		}
+		} catch (Exception e) {
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+    	return resultMap;
+	}
+    
+    /**
+     * 회원가입
+     */
+    @ApiOperation(value = "users", notes = "post : register", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.USER_REGISTER, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> registerUser(@ApiParam(name = "userVO", defaultValue="{\"email\":\"id@mail.com\",\"password\":\"password\",\"name\":\"홍길동\"}", value ="user data insert", required = true)@RequestBody User user){
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+    		User userVO = new User();
+    		userVO.setName(user.getName());
+    		userVO.setPassword(user.getPassword());
+    		userVO.setEmail(user.getEmail());
+    		User result = userRepository.save(userVO);
+    		
+    		if ( result != null ){
+    			resultMap.put("resultCode", Code.CODE_SUCCESS);
+				resultMap.put("resultMessage", Message.MSG_SUCCESS);
+				resultMap.put("data", result);
+    		}
+		} catch (Exception e) {
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+		return resultMap;
+	}
+    /**
+	 * 로그아웃
+	 */
+    @ApiOperation(value = "users", notes = "get : logout", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
+	@RequestMapping(path = Path.USER_LOGOUT, method = RequestMethod.GET)
+	public @ResponseBody Map<String, Object> logout(HttpServletRequest request,	HttpServletResponse response){
+    	Map<String, Object> resultMap = new HashMap<>();
+    	try {
+    		HttpSession session = request.getSession();
+    		session.removeAttribute(Session.LOGIN_KEY);
+    		session.removeAttribute(Session.LOGIN_TOKEN_KEY);
+    		
+    		resultMap.put("resultCode", Code.CODE_SUCCESS);
+			resultMap.put("resultMessage", Message.MSG_SUCCESS);
+		} catch (Exception e) {
+			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
+			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);
+		}
+    	return resultMap;
+	}
+    
 }

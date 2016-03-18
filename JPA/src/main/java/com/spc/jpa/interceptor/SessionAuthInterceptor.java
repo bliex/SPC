@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.spc.jpa.common.Session;
+import com.spc.jpa.domain.board.Board;
 import com.spc.jpa.domain.user.User;
 
 @Component
@@ -26,7 +27,7 @@ public class SessionAuthInterceptor extends HandlerInterceptorAdapter {
 		
 		// 로그인이 되어있지 않다면
 		if( user == null ){
-			return false;
+			//return false;
 		}
 		return true;
     }

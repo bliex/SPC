@@ -6,6 +6,7 @@ public class Constant {
     {
 		// Common Code
         public static final String CODE_SUCCESS 		= "000";					// 성공
+        public static final int CODE_RESPONSE_SUCESS 	= 200;						// 성공
         public static final String CODE_SERVER_ERR 		= "900";					// 실패
         
         // Login Code

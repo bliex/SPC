@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -24,7 +25,9 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -33,6 +36,8 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
 import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
+import com.spc.jpa.common.XssFilter;
+import com.spc.jpa.interceptor.SessionAuthInterceptor;
 import com.mangofactory.swagger.models.dto.ApiInfo;
 
 /**
@@ -46,6 +51,9 @@ import com.mangofactory.swagger.models.dto.ApiInfo;
 @EnableSwagger
 public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 
+	@Autowired
+	private SessionAuthInterceptor sessionAuthInterceptor;
+	
 	/**
 	 * jsp PreFix, PostFix
 	 * 
@@ -69,7 +77,15 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
 	}
-
+	
+	/**
+	 * addInterceptors
+	 */
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(sessionAuthInterceptor).addPathPatterns("/swapi/board/**");
+	}
+	
 	/**
 	 * configureMessageConverters
 	 */
@@ -144,11 +160,11 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 	/**
 	 * addViewControllers
 	 */
-	// @Override
-	// public void addViewControllers(ViewControllerRegistry registry) {
-	// registry.addViewController("/").setViewName("forward:/app/login");
-	// super.addViewControllers(registry);
-	// }
+	 @Override
+	 public void addViewControllers(ViewControllerRegistry registry) {
+		 registry.addViewController("/").setViewName("forward:/app/login");
+		 super.addViewControllers(registry);
+	 }
 
 	/**
 	 * addCorsMappings
@@ -184,4 +200,15 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 				.apiInfo(new ApiInfo("spc-api-swagger", null, null, null, null, null)).useDefaultResponseMessages(false)
 				.includePatterns("/swapi.*");
 	}
+	
+	@Bean
+    public FilterRegistrationBean someFilterRegistration() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new XssFilter());
+        registration.addUrlPatterns("/**");
+        registration.addInitParameter("paramName", "paramValue");
+        registration.setName("XssFilter");
+        return registration;
+    }
+	
 }

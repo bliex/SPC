@@ -8,4 +8,6 @@ public class Session {
 	/** 로그인 토큰 세션키 */
 	public static final String LOGIN_TOKEN_KEY 		= "_SPCLoginTokenSessionKey";
 	
+	/** 로그인 토큰 세션키 */
+	public static final String LOGIN_EMAIL_KEY		= "_SPCLoginEmailSessionKey";
 }

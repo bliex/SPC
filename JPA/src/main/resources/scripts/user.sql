@@ -61,19 +61,21 @@ INSERT INTO product_category(product_id, category_id) VALUES ('300', '400');
 INSERT INTO product_category(product_id, category_id) VALUES ('400', '400');
 
 -- users
-INSERT INTO users(id, password, name, email, version, created_time, created_by, modified_time, modified_by) VALUES ('spc', 'spc', 'spc', 'spc@gmail.com', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO users(id, password, name, email, version, created_time, created_by, modified_time, modified_by) VALUES ('bliex', 'bliex', 'bliex', 'spc@gmail.com', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO users(user_id, password, name, email, version, created_time, created_by, modified_time, modified_by) VALUES ('spc', 'spc', 'spc', 'spc@gmail.com', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO users(user_id, password, name, email, version, created_time, created_by, modified_time, modified_by) VALUES ('bliex', 'bliex', 'bliex', 'spc@gmail.com', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
 
 -- board
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (1, 'NOTICE_BOARD', 'title1', 'content1', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (2, 'NOTICE_BOARD', 'title2', 'content2', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (3, 'NOTICE_BOARD', 'title3', 'content3', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (4, 'NOTICE_BOARD', 'title4', 'content4', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (5, 'FREE_BOARD', 'title5', 'content5', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (6, 'FREE_BOARD', 'title6', 'content6', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (7, 'FREE_BOARD', 'title7', 'content7', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (8, 'FREE_BOARD', 'title8', 'content8', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (9, 'ALERT_BOARD', 'title9', 'content9', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
-INSERT INTO boards(id, board_type, title, contents, version, created_time, created_by, modified_time, modified_by) VALUES (10, 'ALERT_BOARD', 'title10', 'content10', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('1', 'NOTICE_BOARD', 'title1', 'content1', 'spc', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('2', 'NOTICE_BOARD', 'title2', 'content2', 'bliex', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('3', 'NOTICE_BOARD', 'title3', 'content3', 'spc', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('4', 'NOTICE_BOARD', 'title4', 'content4', 'bliex', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('5', 'NOTICE_BOARD', 'title5', 'content5', 'spc', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('6', 'NOTICE_BOARD', 'title6', 'content6', 'bliex', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('7', 'NOTICE_BOARD', 'title7', 'content7', 'spc', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('8', 'NOTICE_BOARD', 'title8', 'content8', 'bliex', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('9', 'NOTICE_BOARD', 'title9', 'content9', 'spc', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('10', 'NOTICE_BOARD', 'title10', 'content10', 'bliex', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('11', 'NOTICE_BOARD', 'title9', 'content9', 'spc', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
+INSERT INTO boards(board_id, board_type, title, contents, user_id, version, created_time, created_by, modified_time, modified_by) VALUES ('12', 'NOTICE_BOARD', 'title10', 'content10', 'bliex', 1.0, NOW(), 'INIT',  NOW(), 'INIT');
 
 COMMIT;

@@ -1,17 +1,21 @@
 package com.spc.jpa.domain.board;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import com.spc.jpa.domain.AbstractHistoryEntity;
+import com.spc.jpa.domain.user.User;
 
 /**
  * @author lKJ
@@ -30,7 +34,7 @@ public class Board extends AbstractHistoryEntity{
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	@Column(name = "id")
+	@Column(name = "board_id")
 	String id;
 
 
@@ -44,6 +48,10 @@ public class Board extends AbstractHistoryEntity{
 	@Lob
 	@Column(name = "contents")
 	private String contents;
+	
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name = "user_id")
+	private User user;
 	
 	public String getId() {
 		return id;
@@ -77,9 +85,13 @@ public class Board extends AbstractHistoryEntity{
 		this.contents = contents;
 	}
 	
-	@Override
-	public String toString() {
-		return "Board [id=" + id + ", boardType=" + boardType + ", title=" + title + ", contents=" + contents + "]";
+//	public User getUser() {
+//		return user;
+//	}
+
+	public void setUser(User user) {
+		// 기존 관계 제거
+		this.user = user;
 	}
-	
+
 }
