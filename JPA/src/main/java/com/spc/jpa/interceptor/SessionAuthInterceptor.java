@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.spc.jpa.common.Session;
@@ -25,9 +26,12 @@ public class SessionAuthInterceptor extends HandlerInterceptorAdapter {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute(Session.LOGIN_KEY);
 		
-		// 로그인이 되어있지 않다면
+		// 로그인이 되어있지 않다면 
+		// 1. 값을 Session 에 저장하지 말고, DB로 항상 조회해서 처리한다.
 		if( user == null ){
-			//return false;
+			//user 값이 없을 경우 화면에 보내주어야 할 페이지로 전환 한다.
+			String url = "";
+			throw new ModelAndViewDefiningException(new ModelAndView(url));
 		}
 		return true;
     }
