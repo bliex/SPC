@@ -62,8 +62,8 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 	@Bean
 	public InternalResourceViewResolver internalResourceViewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-		viewResolver.setPrefix("/WEB-INF/json/");
-		viewResolver.setSuffix(".json");
+		viewResolver.setPrefix("/WEB-INF/");
+		//viewResolver.setSuffix(".json");
 		return viewResolver;
 	}
 

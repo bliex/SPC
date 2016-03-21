@@ -41,10 +41,10 @@ public class SessionAuthInterceptor extends HandlerInterceptorAdapter {
 				returnMap.put("resultCode", Code.CODE_LOGIN_NON_VALID);
 				returnMap.put("resultMessage", Message.MSG_LOGIN_NON_VALID);
 				
-				throw new ModelAndViewDefiningException(new ModelAndView("/error"));
+				throw new ModelAndViewDefiningException(new ModelAndView("/json/error.json"));
 			}
 		} else {
-			throw new ModelAndViewDefiningException(new ModelAndView("/error"));
+			throw new ModelAndViewDefiningException(new ModelAndView("/json/error.json"));
 		}
     	
 		return true;
