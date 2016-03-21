@@ -62,8 +62,8 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 	@Bean
 	public InternalResourceViewResolver internalResourceViewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-		viewResolver.setPrefix("/WEB-INF/jsp/");
-		viewResolver.setSuffix(".jsp");
+		viewResolver.setPrefix("/WEB-INF/json/");
+		viewResolver.setSuffix(".json");
 		return viewResolver;
 	}
 
@@ -83,9 +83,9 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(sessionAuthInterceptor).addPathPatterns("/swapi/**")
+		registry.addInterceptor(sessionAuthInterceptor).addPathPatterns("/swapi/board/**");
 						//유저 관련된 기능은 예외 처리.
-						.excludePathPatterns("/swapi/user/login", "swapi/user/logout", "swapi/user/count", "/swapi/user/register");
+//						.excludePathPatterns("/swapi/user/login", "swapi/user/logout", "swapi/user/count", "/swapi/user/register");
 	}
 	
 	/**

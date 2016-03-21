@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spc.jpa.common.Constant.Code;
 import com.spc.jpa.common.Constant.Message;
+import com.spc.jpa.common.MessageUtil;
 import com.spc.jpa.common.Path;
-import com.spc.jpa.common.Session;
 import com.spc.jpa.domain.user.User;
 import com.spc.jpa.domain.user.UserRepository;
 import com.spc.jpa.vo.UserToken;
@@ -33,6 +32,8 @@ public class UserController {
 	@Autowired
 	UserRepository userRepository;
 	
+	MessageUtil messageUtil = new MessageUtil();
+	
 	/**
 	 * 로그인
 	 */
@@ -43,20 +44,18 @@ public class UserController {
 			@ApiParam(name = "user data", defaultValue="{\"email\" : \"spc@gmail.com\", \"password\":\"spc\"}", value ="user data insert", required = true)@RequestBody User user){
     	Map<String, Object> resultMap = new HashMap<>();
     	try {
-    		User result = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
+    		User result = userRepository.findByEmailAndPassword(user.getEmail(), messageUtil.encodeSHA256(user.getPassword()));
     		if ( result != null ) {
-    			// 로그인정보만 저장
-    			HttpSession session = request.getSession();
-        		session.setAttribute(Session.LOGIN_KEY, result);
-        		session.setAttribute(Session.LOGIN_EMAIL_KEY, result.getEmail());
+    			// login user token save 
+    			UserToken token = new UserToken(result.getName(), result.getEmail());
     			
-        		// 토큰 저장
-				UserToken token = new UserToken(result.getName(), result.getEmail());
-				session.setAttribute(Session.LOGIN_TOKEN_KEY, token);
-
+    			result.setTokenUuid(token.getKey());
+    			userRepository.save(result);
+    			
 				resultMap.put("resultCode", Code.CODE_SUCCESS);
 				resultMap.put("resultMessage", Message.MSG_SUCCESS);
 				resultMap.put("data", result);
+				resultMap.put("uuid", token.getKey());
 				
     		} else {
     			resultMap.put("resultCode", Code.CODE_LOGIN_FAIL);
@@ -104,7 +103,7 @@ public class UserController {
     	try {
     		User userVO = new User();
     		userVO.setName(user.getName());
-    		userVO.setPassword(user.getPassword());
+    		userVO.setPassword(messageUtil.encodeSHA256(user.getPassword()));
     		userVO.setEmail(user.getEmail());
     		User result = userRepository.save(userVO);
     		
@@ -124,16 +123,22 @@ public class UserController {
 	 */
     @ApiOperation(value = "users", notes = "get : logout", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
-	@RequestMapping(path = Path.USER_LOGOUT, method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> logout(HttpServletRequest request,	HttpServletResponse response){
+	@RequestMapping(path = Path.USER_LOGOUT, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> logout(HttpServletRequest request,	HttpServletResponse response,
+			@ApiParam(name = "user data", defaultValue="{\"tokenUuid\" : \"uuid\"}", value ="user logout", required = true)@RequestBody User user){
     	Map<String, Object> resultMap = new HashMap<>();
     	try {
-    		HttpSession session = request.getSession();
-    		session.removeAttribute(Session.LOGIN_KEY);
-    		session.removeAttribute(Session.LOGIN_TOKEN_KEY);
-    		
-    		resultMap.put("resultCode", Code.CODE_SUCCESS);
-			resultMap.put("resultMessage", Message.MSG_SUCCESS);
+    		User result = userRepository.findOneByTokenUuid(user.getTokenUuid());
+    		if (result != null) {
+    			result.setTokenUuid("");
+    			userRepository.save(result);
+    			
+    			resultMap.put("resultCode", Code.CODE_SUCCESS);
+    			resultMap.put("resultMessage", Message.MSG_SUCCESS);
+    		} else {
+    			resultMap.put("resultCode", Code.CODE_LOGIN_NON_VALID);
+    			resultMap.put("resultMessage", Message.MSG_LOGIN_NON_VALID);
+    		}
 		} catch (Exception e) {
 			resultMap.put("resultCode", Code.CODE_SERVER_ERR);
 			resultMap.put("resultMessage", Message.MSG_SERVER_ERR);

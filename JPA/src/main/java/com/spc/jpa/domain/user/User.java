@@ -26,24 +26,25 @@ public class User extends AbstractHistoryEntity{
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	@Column(name = "user_id")
+	@Column(name = "user_id", columnDefinition="varchar(50)")
 	String id;
 
-	@Column(name = "token_uuid")
+	@Column(name = "token_uuid", columnDefinition="varchar(50)")
 	String tokenUuid;
 	
-	@Column(name = "password")
+	@Column(name = "password", columnDefinition="varchar(200)")
   	private String password;
   	
-  	@Column(name = "name")
+  	@Column(name = "name", columnDefinition="varchar(100)")
   	private String name;
   	
-  	@Column(name = "email")
+  	@Column(name = "email", columnDefinition="varchar(200)")
   	private String email;
   	
   	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
   	private List<Board> boards = new ArrayList<Board>();
   	
+  	// getter and setter
 	public String getId() {
 		return id;
 	}
@@ -90,6 +91,13 @@ public class User extends AbstractHistoryEntity{
 
 	public void setBoards(List<Board> boards) {
 		this.boards = boards;
+	}
+
+	// toString..
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", tokenUuid=" + tokenUuid + ", password=" + password + ", name=" + name + ", email="
+				+ email + ", boards=" + boards + "]";
 	}
 
 }

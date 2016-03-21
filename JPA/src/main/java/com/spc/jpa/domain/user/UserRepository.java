@@ -10,12 +10,20 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface UserRepository extends JpaRepository<User, String> {
 
 	/**
-	 * 동일 아이디 갯수
+	 * 로그인
 	 * 
 	 * @param User
 	 * @return User
 	 */
 	User findByEmailAndPassword(String email, String password);
+	
+	/**
+	 * 로그아웃
+	 * 
+	 * @param User
+	 * @return User
+	 */
+	User findOneByTokenUuid(String tokenUuid);
 	
 	/**
 	 * 동일 아이디 갯수

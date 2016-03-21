@@ -85,11 +85,15 @@ public class Order extends AbstractHistoryEntity {
 		this.price = price;
 	}
 
-	public Member getMember() {
-		return member;
-	}
+//	public Member getMember() {
+//		return member;
+//	}
 
 	public void setMember(Member member) {
+		// 기존관계 제거
+		if ( this.member != null ) {
+			this.member.getOrders().remove(this);
+		}
 		this.member = member;
 	}
 

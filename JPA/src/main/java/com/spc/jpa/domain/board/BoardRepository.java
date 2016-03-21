@@ -29,7 +29,7 @@ public interface BoardRepository extends JpaRepository<Board, String> {
 	 * @param pageable
 	 * @return Page<Board>
 	 */
-	public Page<Board> findByBoardType(Pageable pageable, @Param("board_type")BoardType boardType);
+	public Page<Board> findByBoardTypeOrderByCreatedTimeDescTitleDesc(Pageable pageable, @Param("board_type")BoardType boardType);
 	
 	/**
 	 * 게시글 목록 조회 (정렬)
@@ -45,7 +45,7 @@ public interface BoardRepository extends JpaRepository<Board, String> {
 	 * @param pageable
 	 * @return Page<Board>
 	 */
-	public Page<Board> findByBoardTypeAndTitleContaining(Pageable pageable, @Param("title")String title, @Param("board_type")BoardType boardType);
+	public Page<Board> findByTitleContainingAndBoardTypeOrderByCreatedTimeDescTitleDesc(Pageable pageable, @Param("title")String title, @Param("board_type")BoardType boardType);
 	
 	/**
 	 * 게시글 목록 조회 (페이징, 검색)
@@ -53,6 +53,6 @@ public interface BoardRepository extends JpaRepository<Board, String> {
 	 * @param pageable
 	 * @return Page<Board>
 	 */
-	public Page<Board> findByBoardTypeAndContentsContaining(Pageable pageable, @Param("contents")String contents, @Param("board_type")BoardType boardType);
+	public Page<Board> findByContentsContainingAndBoardTypeOrderByCreatedTimeDescTitleDesc(Pageable pageable, @Param("contents")String contents, @Param("board_type")BoardType boardType);
 	
 }

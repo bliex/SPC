@@ -11,8 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import com.spc.jpa.domain.AbstractHistoryEntity;
 import com.spc.jpa.domain.user.User;
@@ -34,15 +36,15 @@ public class Board extends AbstractHistoryEntity{
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	@Column(name = "board_id")
+	@Column(name = "board_id", columnDefinition="varchar(50)")
 	String id;
 
 
-	@Column(name = "board_type")
+	@Column(name = "board_type", columnDefinition="varchar(50)")
 	@Enumerated(EnumType.STRING)
 	private BoardType boardType;
 
-	@Column(name = "title")
+	@Column(name = "title", columnDefinition="varchar(1000)")
 	private String title;
 
 	@Lob

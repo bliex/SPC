@@ -77,15 +77,14 @@ public class Product extends AbstractHistoryEntity {
 		this.price = price;
 	}
 
-	public List<Category> getCategories() {
-		return categories;
-	}
+//	public List<Category> getCategories() {
+//		return categories;
+//	}
 
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
 
-	// 무한루프 방지..
     public boolean addCategory(Category category) {
         if(categories == null)
             categories = new ArrayList<>();
