@@ -49,13 +49,13 @@ public abstract class AbstractHistoryEntity {
 
 	@PrePersist
 	public void prePersist() {
-		this.createdTime = DateTime.now();
+		this.createdTime = DateTime.now().plusHours(9);
 		this.modifiedTime = this.createdTime;
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		modifiedTime = DateTime.now();
+		modifiedTime = DateTime.now().plusHours(9);
 	}
 
 	@ApiModelProperty(hidden = true)

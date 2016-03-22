@@ -37,14 +37,10 @@ public class SessionAuthInterceptor extends HandlerInterceptorAdapter {
 			// 유효한 uuid가 아닐경우
 			if( user == null ){
 				//user 값이 없을 경우 화면에 보내주어야 할 페이지로 전환 한다.
-				Map<String, String> returnMap = new HashMap<>();
-				returnMap.put("resultCode", Code.CODE_LOGIN_NON_VALID);
-				returnMap.put("resultMessage", Message.MSG_LOGIN_NON_VALID);
-				
-				throw new ModelAndViewDefiningException(new ModelAndView("/json/error.json"));
+				throw new ModelAndViewDefiningException(new ModelAndView("/error"));
 			}
 		} else {
-			throw new ModelAndViewDefiningException(new ModelAndView("/json/error.json"));
+			throw new ModelAndViewDefiningException(new ModelAndView("/error"));
 		}
     	
 		return true;
