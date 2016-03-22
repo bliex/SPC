@@ -29,14 +29,14 @@ public abstract class AbstractHistoryEntity {
 	String createdBy;
 
 	@Column(name = "created_time")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	DateTime createdTime;
 
 	@Column(name = "modified_by")
 	String modifiedBy;
 
 	@Column(name = "modified_time")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	DateTime modifiedTime;
 
 	public AbstractHistoryEntity() {
