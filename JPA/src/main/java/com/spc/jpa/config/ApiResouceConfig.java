@@ -83,9 +83,10 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(sessionAuthInterceptor).addPathPatterns("/swapi/board/**");
+		registry.addInterceptor(sessionAuthInterceptor).addPathPatterns("/**")
 						//유저 관련된 기능은 예외 처리.
-//						.excludePathPatterns("/swapi/user/login", "swapi/user/logout", "swapi/user/count", "/swapi/user/register");
+						.excludePathPatterns("/swapi/user/login", "swapi/user/logout", "swapi/user/count", "/swapi/user/register",
+								"/api/user/login", "api/user/logout", "api/user/count", "/api/user/register");
 	}
 	
 	/**
