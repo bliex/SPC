@@ -8,6 +8,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -29,15 +30,15 @@ public abstract class AbstractHistoryEntity {
 	String createdBy;
 
 	@Column(name = "created_time")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	DateTime createdTime;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	LocalDateTime createdTime;
 
 	@Column(name = "modified_by")
 	String modifiedBy;
 
 	@Column(name = "modified_time")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	DateTime modifiedTime;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	LocalDateTime modifiedTime;
 
 	public AbstractHistoryEntity() {
 		// empty constructor
@@ -49,13 +50,13 @@ public abstract class AbstractHistoryEntity {
 
 	@PrePersist
 	public void prePersist() {
-		this.createdTime = DateTime.now().plusHours(9);
+		this.createdTime = LocalDateTime.now();
 		this.modifiedTime = this.createdTime;
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		modifiedTime = DateTime.now().plusHours(9);
+		modifiedTime = LocalDateTime.now();
 	}
 
 	@ApiModelProperty(hidden = true)
@@ -87,20 +88,20 @@ public abstract class AbstractHistoryEntity {
 	}
 
 	@ApiModelProperty(readOnly = true)
-	public DateTime getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(DateTime createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@ApiModelProperty(readOnly = true)
-	public DateTime getModifiedTime() {
+	public LocalDateTime getModifiedTime() {
 		return modifiedTime;
 	}
 
-	public void setModifiedTime(DateTime modifiedTime) {
+	public void setModifiedTime(LocalDateTime modifiedTime) {
 		this.modifiedTime = modifiedTime;
 	}
 }

@@ -37,6 +37,7 @@ import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
 import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 import com.spc.jpa.common.XssFilter;
+import com.spc.jpa.interceptor.LocaleInterceptor;
 import com.spc.jpa.interceptor.SessionAuthInterceptor;
 import com.mangofactory.swagger.models.dto.ApiInfo;
 
@@ -53,6 +54,9 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 
 	@Autowired
 	private SessionAuthInterceptor sessionAuthInterceptor;
+	
+	@Autowired
+	private LocaleInterceptor localeInterceptor;
 	
 	/**
 	 * jsp PreFix, PostFix
@@ -87,6 +91,7 @@ public class ApiResouceConfig extends WebMvcAutoConfigurationAdapter {
 						//유저 관련된 기능은 예외 처리.
 		.excludePathPatterns("/swapi/user/login", "/swapi/user/logout", "/swapi/user/count", "/swapi/user/register",
 				"/api/user/login", "/api/user/logout", "/api/user/count", "/api/user/register", "/api-docs", "/api-docs/**");
+		registry.addInterceptor(localeInterceptor).addPathPatterns("/**");
 	}
 	
 	/**

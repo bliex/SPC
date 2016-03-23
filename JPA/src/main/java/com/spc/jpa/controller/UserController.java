@@ -18,6 +18,7 @@ import com.spc.jpa.common.Constant.Code;
 import com.spc.jpa.common.Constant.Message;
 import com.spc.jpa.common.MessageUtil;
 import com.spc.jpa.common.Path;
+import com.spc.jpa.common.Utils;
 import com.spc.jpa.domain.user.User;
 import com.spc.jpa.domain.user.UserRepository;
 import com.spc.jpa.vo.UserToken;
@@ -34,6 +35,8 @@ public class UserController {
 	
 	MessageUtil messageUtil = new MessageUtil();
 	
+	Utils utils = new Utils();
+	
 	/**
 	 * 로그인
 	 */
@@ -44,7 +47,7 @@ public class UserController {
 			@ApiParam(name = "user data", defaultValue="{\"email\" : \"spc@gmail.com\", \"password\":\"spc\"}", value ="user data insert", required = true)@RequestBody User user){
     	Map<String, Object> resultMap = new HashMap<>();
     	try {
-    		User result = userRepository.findByEmailAndPassword(user.getEmail(), messageUtil.encodeSHA256(user.getPassword()));
+    		User result = userRepository.findByEmailAndPassword(user.getEmail(), utils.encodeSHA256(user.getPassword()));
     		if ( result != null ) {
     			// login user token save 
     			UserToken token = new UserToken(result.getName(), result.getEmail());
@@ -103,7 +106,7 @@ public class UserController {
     	try {
     		User userVO = new User();
     		userVO.setName(user.getName());
-    		userVO.setPassword(messageUtil.encodeSHA256(user.getPassword()));
+    		userVO.setPassword(utils.encodeSHA256(user.getPassword()));
     		userVO.setEmail(user.getEmail());
     		User result = userRepository.save(userVO);
     		

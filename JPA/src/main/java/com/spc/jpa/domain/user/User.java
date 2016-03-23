@@ -26,10 +26,10 @@ public class User extends AbstractHistoryEntity{
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	@Column(name = "user_id", columnDefinition="varchar(50)")
+	@Column(name = "user_id", columnDefinition="varchar(100)")
 	String id;
 
-	@Column(name = "token_uuid", columnDefinition="varchar(50)")
+	@Column(name = "token_uuid", columnDefinition="varchar(100)")
 	String tokenUuid;
 	
 	@Column(name = "password", columnDefinition="varchar(200)")
