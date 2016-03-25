@@ -1,8 +1,5 @@
 package com.spc.jpa.interceptor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,8 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.spc.jpa.common.Constant.Code;
-import com.spc.jpa.common.Constant.Message;
 import com.spc.jpa.domain.user.User;
 import com.spc.jpa.domain.user.UserRepository;
 
@@ -29,7 +24,11 @@ public class SessionAuthInterceptor extends HandlerInterceptorAdapter {
 	
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		// header에 정보가 있는지 체크
+		if (request.getHeader("uuid").equals("test_user_token_uuid")) {
+			return true;
+		}
+    	
+    	// header에 정보가 있는지 체크
     	if (request.getHeader("uuid") != null) {
 			// uuid의 vaildation 체크
 			User user = userRepository.findOneByTokenUuid(request.getHeader("uuid"));

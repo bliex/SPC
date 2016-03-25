@@ -24,7 +24,7 @@ listController.controller('listController', [ '$scope', '$http',
 	    			,"searchType" 		: "TITLE"
 	    			,"searchKeyword" 	: ""
 	    		},
-	    		url	 : "http://spc.pcf.exntu.com//swapi/board/list"
+	    		url	 : "http://spc.pcf.exntu.com/swapi/board/list"
 	    	})
 	    	// 성공콜백
 	    	.success(function(data, status, headers, config){

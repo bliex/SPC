@@ -57,7 +57,6 @@ public class UserController {
     			
 				resultMap.put("resultCode", Code.CODE_SUCCESS);
 				resultMap.put("resultMessage", Message.MSG_SUCCESS);
-				resultMap.put("data", result);
 				resultMap.put("uuid", token.getKey());
 				
     		} else {

@@ -46,7 +46,7 @@ public class BoardController {
     @ApiOperation(value = "boards", notes = "post : boards", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
 	@RequestMapping(path = Path.BOARD_LIST, method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> findBoards(@ApiParam(name = "uuid", defaultValue="uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
+	public @ResponseBody Map<String, Object> findBoards(@ApiParam(name = "uuid", defaultValue="test_user_token_uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
 			,@ApiParam(name = "BoardInfo", defaultValue="{\"boardType\" : \"NOTICE_BOARD\", \"page\" : \"1\", \"size\":\"10\",\"searchType\":\"TITLE\",\"searchKeyword\":\"\"}", value ="paging and searching data", required = true) @RequestBody BoardInfo info) {
     	
     	Map<String, Object> resultMap = new HashMap<>();
@@ -81,7 +81,7 @@ public class BoardController {
     @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
 	@RequestMapping(path = Path.BOARD_DETAIL, method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> findBoardDetail(HttpServletRequest request, HttpServletResponse response
-			,@ApiParam(name = "uuid", defaultValue="uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
+			,@ApiParam(name = "uuid", defaultValue="test_user_token_uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
 			,@ApiParam(name = "Board", defaultValue="{\"id\":\"board_id\"}", value ="board data", required = true) @RequestBody Board board) {
     	
     	Map<String, Object> resultMap = new HashMap<>();
@@ -117,7 +117,7 @@ public class BoardController {
     @ApiOperation(value = "boards", notes = "post : boards", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
 	@RequestMapping(path = Path.BOARD_REGISTER, method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> saveBoards(@ApiParam(name = "uuid", defaultValue="uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
+	public @ResponseBody Map<String, Object> saveBoards(@ApiParam(name = "uuid", defaultValue="test_user_token_uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
 			,@ApiParam(name = "boardVO", defaultValue="{\"boardType\" : \"NOTICE_BOARD\", \"title\":\"제목\",\"contents\":\"내용\",\"createdBy\":\"작성자\"}", value ="board data insert", required = true)@RequestBody Board board){
     	
     	Map<String, Object> resultMap = new HashMap<>();
@@ -150,7 +150,7 @@ public class BoardController {
 	@ApiOperation(value = "boards", notes = "put : boards", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
 	@RequestMapping(path = Path.BOARD_UPDATE, method = RequestMethod.PUT)
-    public @ResponseBody Map<String, Object> updateBoards(@ApiParam(name = "uuid", defaultValue="uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
+    public @ResponseBody Map<String, Object> updateBoards(@ApiParam(name = "uuid", defaultValue="test_user_token_uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
 			,@ApiParam(name = "boardVO", defaultValue="{\"id\" : \"id\", \"title\":\"제목\",\"contents\":\"내용\"}", value ="board data update", required = true)@RequestBody Board board){
 
     	Map<String, Object> resultMap = new HashMap<>();
@@ -186,7 +186,7 @@ public class BoardController {
     @ApiOperation(value = "boards", notes = "delete : boards", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = Code.CODE_RESPONSE_SUCESS, message = Message.MSG_SUCCESS)})
 	@RequestMapping(path = Path.BOARD_DELETE, method = RequestMethod.DELETE)
-    public @ResponseBody Map<String, Object> deleteBoards(@ApiParam(name = "uuid", defaultValue="uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
+    public @ResponseBody Map<String, Object> deleteBoards(@ApiParam(name = "uuid", defaultValue="test_user_token_uuid", value ="login token uuid", required = true)@RequestHeader(value="uuid") String uuid
 			,@ApiParam(name = "boardId", defaultValue="{\"id\" : \"id\"}", value ="board data delete", required = true)@RequestBody Board board){
     	
     	Map<String, Object> resultMap = new HashMap<>();
